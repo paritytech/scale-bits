@@ -13,14 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! This crate provides the [`Bits`] type; a drop-in, SCALE-compatible replacement for `BitVec<u8, Lsb0>` which can also be encoded-to and decoded-from
-//! various store and order types at runtime (`Lsb0` and `Msb0` orderings, and `u8`, `u16` and `u32` store types), allowing for dynamic encoding and
-//! decoding based on `scale-info` metadata.
+//! This crate provides the [`Bits`] type; a drop-in, SCALE-compatible replacement for
+//! `BitVec<u8, Lsb0>` which can also be encoded-to and decoded-from various store and
+//! order types at runtime (`Lsb0` and `Msb0` orderings, and `u8`, `u16` and `u32` store
+//! types), allowing for dynamic encoding and decoding based on `scale-info` metadata.
 
 #![deny(missing_docs)]
 
-pub (crate) mod utils;
 mod bits;
+#[cfg(feature = "serde")]
+mod serde;
+pub(crate) mod utils;
 
 pub mod dynamic;
-pub use bits::Bits;
+pub use bits::{Bits, IntoIter, Iter};

@@ -13,10 +13,19 @@ description = "A SCALE compatible representation of a collection of bits"
 keywords = ["parity", "scale", "encoding", "decoding", "bits"]
 include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
 
+[features]
+default = ["serde"]
+
+# Allow Bits to be serialized and deserialized from boolean arrays.
+serde = ["dep:serde"]
+
 [dependencies]
 scale-info = { version = "2.2.0", default-features = false, features = ["std"] }
 codec = { package = "parity-scale-codec", version = "3.2.0", default-features = false, features = [] }
 thiserror = "1.0.34"
+serde = { version = "1", optional = true }
 
 [dev-dependencies]
+codec = { package = "parity-scale-codec", version = "*", default-features = false, features = ["bit-vec"] }
 bitvec = "1"
+serde_json = "1.0.85"
