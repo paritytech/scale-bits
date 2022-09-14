@@ -4,6 +4,6 @@ The format is based on [Keep a Changelog].
 
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 
-## 0.1.0
+## 0.1.1
 
-Initial release.
+Initial release + clippy/doc fixes.
