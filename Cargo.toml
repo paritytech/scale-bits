@@ -1,0 +1,22 @@
+[package]
+name = "scale-bits"
+version = "0.0.1"
+authors = ["Parity Technologies <admin@parity.io>"]
+edition = "2021"
+
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/paritytech/scale-bits"
+documentation = "https://docs.rs/scale-bits"
+homepage = "https://www.parity.io/"
+description = "A SCALE compatible representation of a collection of bits"
+keywords = ["parity", "scale", "encoding", "decoding", "bits"]
+include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
+
+[dependencies]
+scale-info = { version = "2.2.0", default-features = false, features = ["std"] }
+codec = { package = "parity-scale-codec", version = "3.2.0", default-features = false, features = [] }
+thiserror = "1.0.34"
+
+[dev-dependencies]
+bitvec = "1"
