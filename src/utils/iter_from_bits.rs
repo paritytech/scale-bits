@@ -126,60 +126,60 @@ mod test {
 
 		assert_eq!(v(iter_bits_to_u8_msb(vec![])), Vec::<u8>::new());
 
-		assert_eq!(v(iter_bits_to_u8_msb(vec![O, O, I, O, I, I, O, I])), vec![0b00101101]);
+		assert_eq!(v(iter_bits_to_u8_msb(vec![O, O, I, O, I, I, O, I])), vec![0b0010_1101]);
 		assert_eq!(
 			v(iter_bits_to_u8_msb(vec![O, O, I, O, I, I, O, I, I])),
-			vec![0b00101101, 0b10000000]
+			vec![0b0010_1101, 0b1000_0000]
 		);
 
 		assert_eq!(
 			v(iter_bits_to_u16_msb(vec![O, O, I, O, I, I, O, I, I])),
-			vec![0b00101101_10000000]
+			vec![0b0010_1101_1000_0000]
 		);
 		assert_eq!(
 			v(iter_bits_to_u16_msb(vec![O, O, I, O, I, I, O, I, I, O, I])),
-			vec![0b00101101_10100000]
+			vec![0b0010_1101_1010_0000]
 		);
 		assert_eq!(
 			v(iter_bits_to_u16_msb(vec![O, O, I, O, I, I, O, I, I, O, I, O, O, O, O, O, I])),
-			vec![0b00101101_10100000, 0b10000000_00000000]
+			vec![0b0010_1101_1010_0000, 0b1000_0000_0000_0000]
 		);
 
 		assert_eq!(
 			v(iter_bits_to_u32_msb(vec![O, O, I, O, I, I, O, I, I, O, I, O, O, O, O, O, I])),
-			vec![0b00101101_10100000_10000000_00000000]
+			vec![0b0010_1101_1010_0000_1000_0000_0000_0000]
 		);
 		assert_eq!(
 			v(iter_bits_to_u32_msb(vec![
 				O, O, I, O, I, I, O, I, I, O, I, O, O, O, O, O, I, O, I, O, I, I, O, I, I, O, I, O,
 				O, O, O, O, O
 			])),
-			vec![0b00101101_10100000_10101101_10100000, 0]
+			vec![0b0010_1101_1010_0000_1010_1101_1010_0000, 0]
 		);
 
 		assert_eq!(
 			v(iter_bits_to_u16_lsb(vec![O, O, I, O, I, I, O, I, I])),
-			vec![0b00000001_10110100]
+			vec![0b0000_0001_1011_0100]
 		);
 		assert_eq!(
 			v(iter_bits_to_u16_lsb(vec![O, O, I, O, I, I, O, I, I, O, I])),
-			vec![0b00000101_10110100]
+			vec![0b0000_0101_1011_0100]
 		);
 		assert_eq!(
 			v(iter_bits_to_u16_lsb(vec![O, O, I, O, I, I, O, I, I, O, I, O, O, O, O, O, I])),
-			vec![0b00000101_10110100, 0b00000000_00000001]
+			vec![0b0000_0101_1011_0100, 0b0000_0000_0000_0001]
 		);
 
 		assert_eq!(
 			v(iter_bits_to_u32_lsb(vec![O, O, I, O, I, I, O, I, I, O, I, O, O, O, O, O, I])),
-			vec![0b00000000_00000001_00000101_10110100]
+			vec![0b0000_0000_0000_0001_0000_0101_1011_0100]
 		);
 		assert_eq!(
 			v(iter_bits_to_u32_lsb(vec![
 				O, O, I, O, I, I, O, I, I, O, I, O, O, O, O, O, I, O, I, O, I, I, O, I, I, O, I, O,
 				O, O, O, O, O
 			])),
-			vec![0b00000101_10110101_00000101_10110100, 0]
+			vec![0b0000_0101_1011_0101_0000_0101_1011_0100, 0]
 		);
 	}
 }

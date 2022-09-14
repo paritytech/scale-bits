@@ -95,26 +95,26 @@ mod test {
 
 		assert_eq!(v(iter_u8_msb0(0)), vec![O, O, O, O, O, O, O, O]);
 
-		assert_eq!(v(iter_u8_msb0(0b00101101)), vec![O, O, I, O, I, I, O, I]);
+		assert_eq!(v(iter_u8_msb0(0b0010_1101)), vec![O, O, I, O, I, I, O, I]);
 
 		assert_eq!(
-			v(iter_u16_lsb0(0b0000111100101101)),
+			v(iter_u16_lsb0(0b0000_1111_0010_1101)),
 			vec![I, O, I, I, O, I, O, O, I, I, I, I, O, O, O, O]
 		);
 		assert_eq!(
-			v(iter_u16_msb0(0b0000111100101101)),
+			v(iter_u16_msb0(0b0000_1111_0010_1101)),
 			vec![O, O, O, O, I, I, I, I, O, O, I, O, I, I, O, I]
 		);
 
 		assert_eq!(
-			v(iter_u32_lsb0(0b0000111100101101_0000111100101101)),
+			v(iter_u32_lsb0(0b0000_1111_0010_1101_0000_1111_0010_1101)),
 			vec![
 				I, O, I, I, O, I, O, O, I, I, I, I, O, O, O, O, I, O, I, I, O, I, O, O, I, I, I, I,
 				O, O, O, O
 			]
 		);
 		assert_eq!(
-			v(iter_u32_msb0(0b0000111100101101_0000111100101101)),
+			v(iter_u32_msb0(0b0000_1111_0010_1101_0000_1111_0010_1101)),
 			vec![
 				O, O, O, O, I, I, I, I, O, O, I, O, I, I, O, I, O, O, O, O, I, I, I, I, O, O, I, O,
 				I, I, O, I

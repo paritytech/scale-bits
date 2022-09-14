@@ -427,7 +427,7 @@ mod test {
 
 		// Test encode:
 		let bitvec_encoded = bitvec.encode();
-		let bits_encoded = format.encode_bits(&bits);
+		let bits_encoded = format.encode_bits(bits);
 		assert_eq!(
 			bitvec_encoded, bits_encoded,
 			"encoded bits + bitvec don't match (input: {bools:?}, format: {format:?})"
