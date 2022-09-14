@@ -19,6 +19,7 @@
 //! types), allowing for dynamic encoding and decoding based on `scale-info` metadata.
 
 #![deny(missing_docs)]
+#![deny(rustdoc::broken_intra_doc_links)]
 
 mod bits;
 #[cfg(feature = "serde")]

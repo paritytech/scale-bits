@@ -75,18 +75,20 @@ macro_rules! bits {
     }};
 }
 
-/// This represents a sequence of bits (normally expressed as a sequence of boolean values).
-/// Internally it packs these bits into `u8`s to minimise the space needed to store them.
+/// This represents a sequence of boolean values, packed into bits.
 ///
 /// One of the defining features of this type is that it SCALE encodes and decodes into an
-/// identical representation to a `BitVec<Lsb0, u8>`, and has matching a [`scale_info::TypeInfo`]
-/// implementation to align with this. This allows it to be used in place of `BitVec<Lsb0, u8>`
+/// identical representation to a `BitVec<u8, Lsb0>`, and has matching a [`scale_info::TypeInfo`]
+/// implementation to align with this. This allows it to be used in place of `BitVec<u8, Lsb0>`
 /// when you need something with an identical SCALE representation and a simple API and don't wish
 /// to pull in the `bitvec` crate.
 ///
-/// In addition to this, we can dynamically decode a range of [`TypeDefBitSequence`]'s into [`Bits`]
-/// using the [`crate::DynamicBits`] type, and with the `serde` feature enabled it can be
-/// serialized and deserialized from an array of booleans.
+/// In addition to this, we can use the [`crate::dynamic::Format`] type to encode and decode [`Bits`]
+/// in the same way as `BitVec`'s do with order types of `Lsb0` and `Msb0`, and store types of
+/// `u8`, `u16`, and `u32`.
+///
+/// With the `serde` feature enabled we can also serialize and seserialize [`Bits`] from sequences
+/// of booleans.
 ///
 /// # Example
 ///
@@ -459,7 +461,7 @@ impl Encode for Bits {
 
 	fn encoded_size(&self) -> usize {
 		// encoding is just compact encoded number of bits and then the bytes to store them all,
-		// rounded to u8 because we mirror the encoding for a BitVec<Lsb0, u8>.
+		// rounded to u8 because we mirror the encoding for a BitVec<u8, Lsb0>.
 		let compact_byte_len = Compact(self.len() as u32).encoded_size();
 		compact_byte_len + self.storage.len()
 	}

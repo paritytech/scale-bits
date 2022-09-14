@@ -30,7 +30,14 @@ use scale_info::{
 	form::PortableForm, PortableRegistry, TypeDef, TypeDefBitSequence, TypeDefPrimitive,
 };
 
-/// A description of a format to encode/decode [`Bits`] to/from.
+/// A description of a format to encode/decode [`Bits`] to/from. The format basically
+/// defines the "store type" and "order type" that will be used to SCALE encode or
+/// decode some [`Bits`]. These concepts are the same as in `bitvec`, but essentially:
+///
+/// - The [`StoreType`] defines the size of each chunk that's written (eg u8, u16 etc).
+/// - The [`OrderType`] determines the order in which we write to the store type; ie do
+///   we write to the least significant bit first and work up, or write to the most
+///   significant byte first and work down.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Format {
 	store: StoreType,
