@@ -20,6 +20,9 @@
 
 #![deny(missing_docs)]
 
+mod decode_iter;
+mod encode_iter;
+
 mod bits;
 #[cfg(feature = "serde")]
 mod serde;
