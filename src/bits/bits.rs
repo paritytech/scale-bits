@@ -37,7 +37,7 @@ use scale_info::{build::Fields, Path, Type, TypeDefBitSequence, TypeInfo};
 /// assert_eq!(bits.to_vec(), vec![true, true, false, true, false, true]);
 ///
 /// # // Empty bits should be fine:
-/// # assert_eq!(bits![].to_vec(), vec![]);
+/// # assert_eq!(bits![].to_vec(), Vec::<bool>::new());
 /// #
 /// # // Trailing ',' should be fine:
 /// # assert_eq!(bits![0,].to_vec(), vec![false]);
@@ -54,7 +54,7 @@ use scale_info::{build::Fields, Path, Type, TypeDefBitSequence, TypeInfo};
 macro_rules! bits {
     ($($val:tt),* $(,)*) => {{
         #[allow(unused_mut)]
-        let mut bits = $crate::Bits::new();
+        let mut bits = $crate::bits::Bits::new();
         $crate::bits!(__internal__ bits: $($val),*);
         bits
     }};
@@ -93,7 +93,7 @@ macro_rules! bits {
 /// # Example
 ///
 /// ```rust
-/// use scale_bits::Bits;
+/// use scale_bits::bits::Bits;
 ///
 /// let mut bits = Bits::new();
 /// bits.push(true);
@@ -106,7 +106,7 @@ macro_rules! bits {
 /// Converting to and from `Vec<bool>`:
 ///
 /// ```rust
-/// use scale_bits::Bits;
+/// use scale_bits::bits::Bits;
 ///
 /// let bools = vec![true, false, true, false, true];
 /// let bits: Bits = bools.into_iter().collect();
@@ -147,7 +147,7 @@ impl Bits {
 	/// # Example
 	///
 	/// ```rust
-	/// use scale_bits::Bits;
+	/// use scale_bits::bits::Bits;
 	///
 	/// let mut bits = Bits::new();
 	/// assert!(bits.is_empty());
@@ -167,7 +167,7 @@ impl Bits {
 	/// # Example
 	///
 	/// ```rust
-	/// use scale_bits::Bits;
+	/// use scale_bits::bits::Bits;
 	///
 	/// let mut bits = Bits::new();
 	/// assert_eq!(bits.len(), 0);
@@ -198,7 +198,7 @@ impl Bits {
 	/// # Example
 	///
 	/// ```rust
-	/// use scale_bits::{ Bits, bits };
+	/// use scale_bits::{ bits::Bits, bits };
 	///
 	/// let mut bs = Bits::new();
 	/// bs.push(true);
@@ -238,7 +238,7 @@ impl Bits {
 	/// # Example
 	///
 	/// ```rust
-	/// use scale_bits::{ Bits, bits };
+	/// use scale_bits::{ bits::Bits, bits };
 	///
 	/// let mut bs = bits![true, false, true, true];
 	/// assert_eq!(bs.pop(), Some(true));
@@ -333,8 +333,8 @@ impl Bits {
 	/// let v: Vec<bool> = bs.iter().collect();
 	/// assert_eq!(v, vec![true, false, true, true]);
 	/// ```
-	pub fn iter(&'_ self) -> Iter<'_> {
-		Iter { pos: 0, bits: self }
+	pub fn iter(&'_ self) -> BitsIter<'_> {
+		BitsIter { pos: 0, bits: self }
 	}
 
 	/// Convert our bits into a `Vec<bool>`.
@@ -354,10 +354,10 @@ impl Bits {
 
 impl std::iter::IntoIterator for Bits {
 	type Item = bool;
-	type IntoIter = IntoIter;
+	type IntoIter = BitsIntoIter;
 
 	fn into_iter(self) -> Self::IntoIter {
-		IntoIter { pos: 0, bits: self }
+		BitsIntoIter { pos: 0, bits: self }
 	}
 }
 
@@ -365,36 +365,46 @@ impl std::iter::IntoIterator for Bits {
 /// [`std::iter::IntoIterator`] trait. Allows iteration over
 /// each stored bit.
 #[derive(Clone, Debug)]
-pub struct IntoIter {
+pub struct BitsIntoIter {
 	pos: usize,
 	bits: Bits,
 }
 
-impl Iterator for IntoIter {
+impl Iterator for BitsIntoIter {
 	type Item = bool;
 	fn next(&mut self) -> Option<Self::Item> {
 		let next = self.bits.get(self.pos)?;
 		self.pos += 1;
 		Some(next)
 	}
+	fn size_hint(&self) -> (usize, Option<usize>) {
+		let len = self.bits.len() - self.pos;
+		(len, Some(len))
+	}
 }
+impl ExactSizeIterator for BitsIntoIter {}
 
 /// Returned from calling [`Bits::iter()`]. Allows iteration
 /// over each stored bit.
 #[derive(Copy, Clone, Debug)]
-pub struct Iter<'a> {
+pub struct BitsIter<'a> {
 	pos: usize,
 	bits: &'a Bits,
 }
 
-impl<'a> Iterator for Iter<'a> {
+impl<'a> Iterator for BitsIter<'a> {
 	type Item = bool;
 	fn next(&mut self) -> Option<Self::Item> {
 		let next = self.bits.get(self.pos)?;
 		self.pos += 1;
 		Some(next)
 	}
+	fn size_hint(&self) -> (usize, Option<usize>) {
+		let len = self.bits.len() - self.pos;
+		(len, Some(len))
+	}
 }
+impl<'a> ExactSizeIterator for BitsIter<'a> {}
 
 impl std::iter::FromIterator<bool> for Bits {
 	fn from_iter<T: IntoIterator<Item = bool>>(iter: T) -> Self {

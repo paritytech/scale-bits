@@ -20,13 +20,5 @@
 
 #![deny(missing_docs)]
 
-mod decode_iter;
-mod encode_iter;
-
-mod bits;
-#[cfg(feature = "serde")]
-mod serde;
-pub(crate) mod utils;
-
-pub mod dynamic;
-pub use bits::{Bits, IntoIter, Iter};
+pub mod bits;
+pub mod scale;

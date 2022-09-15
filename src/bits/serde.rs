@@ -66,7 +66,7 @@ impl<'de> Deserialize<'de> for Bits {
 
 #[cfg(test)]
 mod test {
-	use crate::{bits, Bits};
+	use crate::bits::Bits;
 
 	#[test]
 	fn ser_deser_bits() {
