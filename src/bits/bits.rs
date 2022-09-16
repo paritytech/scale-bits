@@ -479,7 +479,7 @@ impl Encode for Bits {
 }
 
 #[cfg(feature = "scale-info")]
-mod scale_info {
+mod type_info {
 	use scale_info::{build::Fields, Path, Type, TypeDefBitSequence, TypeInfo};
 
 	impl TypeInfo for super::Bits {
@@ -498,7 +498,7 @@ mod scale_info {
 				}
 			}
 
-			TypeDefBitSequence::new::<Lsb0, u8>().into()
+			TypeDefBitSequence::new::<u8, Lsb0>().into()
 		}
 	}
 }

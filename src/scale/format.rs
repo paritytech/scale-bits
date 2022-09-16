@@ -68,7 +68,7 @@ impl Format {
 			TypeDef::Primitive(TypeDefPrimitive::U8) => Some(StoreFormat::U8),
 			TypeDef::Primitive(TypeDefPrimitive::U16) => Some(StoreFormat::U16),
 			TypeDef::Primitive(TypeDefPrimitive::U32) => Some(StoreFormat::U32),
-			// TypeDef::Primitive(TypeDefPrimitive::U64) => Some(BitStoreTy::U64),
+			TypeDef::Primitive(TypeDefPrimitive::U64) => Some(StoreFormat::U64),
 			_ => None,
 		}
 		.ok_or_else(|| FromMetadataError::StoreFormatNotSupported(format!("{bit_store_def:?}")))?;
@@ -152,3 +152,56 @@ impl std::fmt::Display for FromMetadataError {
 	}
 }
 impl std::error::Error for FromMetadataError {}
+
+#[cfg(feature = "scale-info")]
+#[cfg(test)]
+mod test {
+	use super::*;
+
+	fn make_type<T: scale_info::TypeInfo + 'static>() -> (u32, scale_info::PortableRegistry) {
+		let m = scale_info::MetaType::new::<T>();
+		let mut types = scale_info::Registry::new();
+		let id = types.register_type(&m);
+		let portable_registry: scale_info::PortableRegistry = types.into();
+
+		(id.id(), portable_registry)
+	}
+
+	fn assert_format<T: scale_info::TypeInfo + 'static >(store: StoreFormat, order: OrderFormat) {
+		// Encode to metadata:
+		let (id, types) = make_type::<T>();
+
+		// Pull out said type info:
+		let ty = match types.resolve(id).unwrap().type_def() {
+			scale_info::TypeDef::BitSequence(b) => b,
+			_ => panic!("expected type to look like a bit sequence")
+		};
+
+		// We should be able to obtain a valid Format from it:
+		let actual_format = crate::Format::from_metadata(ty, &types)
+			.expect("can obtain BitSeq Format from type");
+
+		// The format should match the one we expect:
+		assert_eq!(Format::new(store, order), actual_format);
+	}
+
+	#[test]
+	fn format_extracted_properly() {
+		use bitvec::{
+			vec::BitVec,
+			order::{ Lsb0, Msb0 }
+		};
+
+		assert_format::<crate::Bits>(StoreFormat::U8, OrderFormat::Lsb0);
+
+		assert_format::<BitVec<u8, Lsb0>>(StoreFormat::U8, OrderFormat::Lsb0);
+		assert_format::<BitVec<u16, Lsb0>>(StoreFormat::U16, OrderFormat::Lsb0);
+		assert_format::<BitVec<u32, Lsb0>>(StoreFormat::U32, OrderFormat::Lsb0);
+		assert_format::<BitVec<u64, Lsb0>>(StoreFormat::U64, OrderFormat::Lsb0);
+		assert_format::<BitVec<u8, Msb0>>(StoreFormat::U8, OrderFormat::Msb0);
+		assert_format::<BitVec<u16, Msb0>>(StoreFormat::U16, OrderFormat::Msb0);
+		assert_format::<BitVec<u32, Msb0>>(StoreFormat::U32, OrderFormat::Msb0);
+		assert_format::<BitVec<u64, Msb0>>(StoreFormat::U64, OrderFormat::Msb0);
+	}
+
+}
