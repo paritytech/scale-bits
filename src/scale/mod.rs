@@ -26,7 +26,10 @@ pub use format::Format;
 /// };
 ///
 /// let bits = vec![true, true, false, true];
-/// let encoded = encode_using_format(bits.into_iter(), Format::new(StoreFormat::U8, OrderFormat::Msb0));
+/// let encoded = encode_using_format(
+///     bits.into_iter(),
+///     Format::new(StoreFormat::U8, OrderFormat::Msb0)
+/// );
 /// ```
 pub fn encode_using_format<I: ExactSizeIterator<Item = bool>>(it: I, format: Format) -> Vec<u8> {
 	let mut out = Vec::new();
@@ -48,7 +51,11 @@ pub fn encode_using_format<I: ExactSizeIterator<Item = bool>>(it: I, format: For
 /// let bits = vec![true, true, false, true];
 ///
 /// let mut encoded = Vec::new();
-/// encode_using_format_to(bits.into_iter(), Format::new(StoreFormat::U8, OrderFormat::Msb0), &mut encoded);
+/// encode_using_format_to(
+///     bits.into_iter(),
+///     Format::new(StoreFormat::U8, OrderFormat::Msb0),
+///     &mut encoded
+/// );
 /// ```
 pub fn encode_using_format_to<I: ExactSizeIterator<Item = bool>>(
 	it: I,
@@ -83,10 +90,16 @@ pub fn encode_using_format_to<I: ExactSizeIterator<Item = bool>>(
 /// let bits = vec![true, true, false, true];
 ///
 /// // Encode the bits to have something to decode:
-/// let encoded = encode_using_format(bits.iter().copied(), Format::new(StoreFormat::U8, OrderFormat::Msb0));
+/// let encoded = encode_using_format(
+///     bits.iter().copied(),
+///     Format::new(StoreFormat::U8, OrderFormat::Msb0)
+/// );
 ///
 /// // Decode them again.
-/// let decoder = decode_using_format_from(&encoded, Format::new(StoreFormat::U8, OrderFormat::Msb0)).unwrap();
+/// let decoder = decode_using_format_from(
+///     &encoded,
+///     Format::new(StoreFormat::U8, OrderFormat::Msb0)
+/// ).unwrap();
 /// let new_bits: Result<Vec<bool>,_> = decoder.collect();
 ///
 /// assert_eq!(bits, new_bits.unwrap());
@@ -126,10 +139,16 @@ pub fn decode_using_format_from(
 /// let bits = vec![true, true, false, true];
 ///
 /// // Encode the bits to have something to decode:
-/// let encoded = encode_using_format(bits.iter().copied(), Format::new(StoreFormat::U8, OrderFormat::Msb0));
+/// let encoded = encode_using_format(
+///     bits.iter().copied(),
+///     Format::new(StoreFormat::U8, OrderFormat::Msb0)
+/// );
 ///
 /// // Obtain a decoder given some SCALE encoded bits in some format.
-/// let decoder = decode_using_format_from(&encoded, Format::new(StoreFormat::U8, OrderFormat::Msb0)).unwrap();
+/// let decoder = decode_using_format_from(
+///     &encoded,
+///     Format::new(StoreFormat::U8, OrderFormat::Msb0)
+/// ).unwrap();
 ///
 /// // We can see how many bits are stored:
 /// assert_eq!(decoder.len(), 4);

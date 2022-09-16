@@ -167,19 +167,19 @@ mod test {
 		(id.id(), portable_registry)
 	}
 
-	fn assert_format<T: scale_info::TypeInfo + 'static >(store: StoreFormat, order: OrderFormat) {
+	fn assert_format<T: scale_info::TypeInfo + 'static>(store: StoreFormat, order: OrderFormat) {
 		// Encode to metadata:
 		let (id, types) = make_type::<T>();
 
 		// Pull out said type info:
 		let ty = match types.resolve(id).unwrap().type_def() {
 			scale_info::TypeDef::BitSequence(b) => b,
-			_ => panic!("expected type to look like a bit sequence")
+			_ => panic!("expected type to look like a bit sequence"),
 		};
 
 		// We should be able to obtain a valid Format from it:
-		let actual_format = crate::Format::from_metadata(ty, &types)
-			.expect("can obtain BitSeq Format from type");
+		let actual_format =
+			crate::Format::from_metadata(ty, &types).expect("can obtain BitSeq Format from type");
 
 		// The format should match the one we expect:
 		assert_eq!(Format::new(store, order), actual_format);
@@ -188,8 +188,8 @@ mod test {
 	#[test]
 	fn format_extracted_properly() {
 		use bitvec::{
+			order::{Lsb0, Msb0},
 			vec::BitVec,
-			order::{ Lsb0, Msb0 }
 		};
 
 		assert_format::<crate::Bits>(StoreFormat::U8, OrderFormat::Lsb0);
@@ -203,5 +203,4 @@ mod test {
 		assert_format::<BitVec<u32, Msb0>>(StoreFormat::U32, OrderFormat::Msb0);
 		assert_format::<BitVec<u64, Msb0>>(StoreFormat::U64, OrderFormat::Msb0);
 	}
-
 }

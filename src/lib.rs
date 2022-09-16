@@ -19,7 +19,7 @@
 //!    SCALE compatible with a `BitVec<u8, Lsb0>`. It's a deliberately simple
 //!    type that is conceptually just a sequence of bools, and can be used as
 //!    a replacement for `BitVec` when you don't need the additional complexity
-//!    and functionality that it comes with. See the [`bits`] module for more.
+//!    and functionality that it comes with. See the [`mod@bits`] module for more.
 //! 2. Utility methods to help encode and decode arbitrary bit sequences from their
 //!    SCALE representation, or skip over the corresponding bytes entirely, with zero
 //!    allocations. These bypass the need to first go via some `BitVec` with the

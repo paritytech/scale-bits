@@ -37,13 +37,52 @@ jobs:
         uses: actions-rs/cargo@v1.0.3
         with:
           command: check
-          args: --all-targets --all-features --workspace
+          args: --all-targets --all-features
 
       - name: Check no features
         uses: actions-rs/cargo@v1.0.3
         with:
           command: check
-          args: --all-targets --no-default-features --workspace
+          args: --all-targets --no-default-features
+
+      - name: Check only scale-info feature
+        uses: actions-rs/cargo@v1.0.3
+        with:
+          command: check
+          args: --all-targets --no-default-features --features scale-info
+
+      - name: Check only serde feature
+        uses: actions-rs/cargo@v1.0.3
+        with:
+          command: check
+          args: --all-targets --no-default-features --features serde
+
+  wasm:
+    name: Check WASM compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          override: true
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v1.3.0
+
+      - name: Check all features
+        uses: actions-rs/cargo@v1.0.3
+        with:
+          command: check
+          # Test targets don't compile to WASM successfully because
+          # we run tests using BitVec<u64,_> which doesn't.
+          args: --all-features --target wasm32-unknown-unknown
+
 
   fmt:
     name: Cargo fmt
