@@ -2,7 +2,7 @@
 //!
 //! - Encoding: see [`encode_using_format`] and [`encode_using_format_to`].
 //! - Decoding: see [`decode_using_format_from`].
-//! - Talking about obtaining the format of said bit sequences: see the [`format`] module.
+//! - Talking about obtaining the format of said bit sequences: see the [`mod@format`] module.
 //!
 //! The [`Decoder`] enum can also return the expected number of bytes to be decoded
 //! and the number of bits to be returned without actually decoding them.
@@ -12,6 +12,8 @@ mod encode_iter;
 use codec::Error as CodecError;
 
 pub mod format;
+// expose the "common" type; rest in `format` module.
+pub use format::Format;
 
 /// This is a convenience wrapper around [`encode_using_format_to`].
 ///
@@ -26,10 +28,7 @@ pub mod format;
 /// let bits = vec![true, true, false, true];
 /// let encoded = encode_using_format(bits.into_iter(), Format::new(StoreFormat::U8, OrderFormat::Msb0));
 /// ```
-pub fn encode_using_format<I: ExactSizeIterator<Item = bool>>(
-	it: I,
-	format: format::Format,
-) -> Vec<u8> {
+pub fn encode_using_format<I: ExactSizeIterator<Item = bool>>(it: I, format: Format) -> Vec<u8> {
 	let mut out = Vec::new();
 	encode_using_format_to(it, format, &mut out);
 	out
@@ -53,7 +52,7 @@ pub fn encode_using_format<I: ExactSizeIterator<Item = bool>>(
 /// ```
 pub fn encode_using_format_to<I: ExactSizeIterator<Item = bool>>(
 	it: I,
-	format: format::Format,
+	format: Format,
 	out: &mut Vec<u8>,
 ) {
 	use encode_iter::*;
@@ -92,10 +91,10 @@ pub fn encode_using_format_to<I: ExactSizeIterator<Item = bool>>(
 ///
 /// assert_eq!(bits, new_bits.unwrap());
 /// ```
-pub fn decode_using_format_from<'a>(
-	bytes: &'a [u8],
-	format: format::Format,
-) -> Result<Decoder<'a>, CodecError> {
+pub fn decode_using_format_from(
+	bytes: &'_ [u8],
+	format: Format,
+) -> Result<Decoder<'_>, CodecError> {
 	use decode_iter::*;
 	use format::{OrderFormat, StoreFormat};
 	let iter = match (format.store, format.order) {
@@ -112,7 +111,7 @@ pub fn decode_using_format_from<'a>(
 }
 
 /// This is handed back from [`decode_using_format_from`], and can be used to obtain some information about,
-/// or iterate over, the SCALE encoded bit sequence, using the [`format::Format`] given. Alternately, you can
+/// or iterate over, the SCALE encoded bit sequence, using the [`Format`] given. Alternately, you can
 /// match on it to retrieve a decoder for the specific format, which may be more efficient.
 ///
 /// # Example

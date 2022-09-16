@@ -16,19 +16,13 @@
 //! Ths module defines a [`Format`], which is basically a [`StoreFormat`] and an
 //! [`OrderFormat`] and describes the different possible wire formats of a bit sequence.
 
-use scale_info::{
-	form::PortableForm, PortableRegistry, TypeDef, TypeDefBitSequence, TypeDefPrimitive,
-};
-
-/// A description of a format to encode/decode [`Bits`] to/from. The format basically
-/// defines the "store type" and "order type" that will be used to SCALE encode or
-/// decode some [`Bits`]. These concepts are the same as in `bitvec`.
+/// A description of the format used to SCALE encode some bits.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Format {
 	/// The [`StoreFormat`] defines the size of each chunk that's written (eg u8, u16 etc).
 	pub store: StoreFormat,
-	/// The [`OrderFormat`] determines the order in which we write to the store type; ie do
-	/// we write to the least significant bit first and work up, or write to the most
+	/// The [`OrderFormat`] determines the order in which we write bits to the store type;
+	/// do we write to the least significant bit first and work up, or write to the most
 	/// significant byte first and work down.
 	pub order: OrderFormat,
 }
@@ -47,9 +41,10 @@ impl Format {
 		Format { store, order }
 	}
 	/// Use metadata to obtain details about the format.
+	#[cfg(feature = "scale-info")]
 	pub fn from_metadata(
-		ty: &TypeDefBitSequence<PortableForm>,
-		types: &PortableRegistry,
+		ty: &scale_info::TypeDefBitSequence<scale_info::form::PortableForm>,
+		types: &scale_info::PortableRegistry,
 	) -> Result<Format, FromMetadataError> {
 		let bit_store_ty = ty.bit_store_type().id();
 		let bit_order_ty = ty.bit_order_type().id();
@@ -68,6 +63,7 @@ impl Format {
 			.ident()
 			.ok_or(FromMetadataError::NoBitOrderIdent)?;
 
+		use scale_info::{TypeDef, TypeDefPrimitive};
 		let bit_store_out = match bit_store_def {
 			TypeDef::Primitive(TypeDefPrimitive::U8) => Some(StoreFormat::U8),
 			TypeDef::Primitive(TypeDefPrimitive::U16) => Some(StoreFormat::U16),
@@ -120,21 +116,39 @@ pub enum StoreFormat {
 }
 
 /// An error that can occur when we try to encode or decode to a SCALE bit sequence type.
-#[derive(Debug, Clone, thiserror::Error, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FromMetadataError {
 	/// The registry did not contain the bit order type listed.
-	#[error("Bit order type {0} not found in registry")]
 	OrderFormatNotFound(u32),
 	/// The registry did not contain the bit store type listed.
-	#[error("Bit store type {0} not found in registry")]
 	StoreFormatNotFound(u32),
 	/// The bit order type did not have a valid identifier/name.
-	#[error("Bit order cannot be identified")]
 	NoBitOrderIdent,
 	/// The bit store type that we found was not what we expected (a primitive u8/u16/u32/u64).
-	#[error("Bit store type {0} is not supported")]
 	StoreFormatNotSupported(String),
 	/// The bit order type name that we found was not what we expected ("Lsb0" or "Msb0").
-	#[error("Bit order type {0} is not supported")]
 	OrderFormatNotSupported(String),
 }
+
+impl std::fmt::Display for FromMetadataError {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		match self {
+			FromMetadataError::OrderFormatNotFound(n) => {
+				write!(f, "Bit order type {n} not found in registry")
+			}
+			FromMetadataError::StoreFormatNotFound(n) => {
+				write!(f, "Bit store type {n} not found in registry")
+			}
+			FromMetadataError::NoBitOrderIdent => {
+				write!(f, "Bit order cannot be identified")
+			}
+			FromMetadataError::StoreFormatNotSupported(s) => {
+				write!(f, "Bit store type '{s}' is not supported")
+			}
+			FromMetadataError::OrderFormatNotSupported(s) => {
+				write!(f, "Bit order type '{s}' is not supported")
+			}
+		}
+	}
+}
+impl std::error::Error for FromMetadataError {}

@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![allow(clippy::module_inception)]
+
 use codec::{Compact, Decode, Encode};
-use scale_info::{build::Fields, Path, Type, TypeDefBitSequence, TypeInfo};
 
 /// This macro makes it trivial to construct [`Bits`] from either 0 and 1 bit
 /// literals, or booleans.
@@ -83,7 +84,7 @@ macro_rules! bits {
 /// when you need something with an identical SCALE representation and a simple API and don't wish
 /// to pull in the `bitvec` crate.
 ///
-/// In addition to this, we can use the [`crate::dynamic::Format`] type to encode and decode [`Bits`]
+/// In addition to this, we can use the [`crate::scale::Format`] type to encode and decode [`Bits`]
 /// in the same way as `BitVec`'s do with order types of `Lsb0` and `Msb0`, and store types of
 /// `u8`, `u16`, and `u32`.
 ///
@@ -477,20 +478,27 @@ impl Encode for Bits {
 	}
 }
 
-impl TypeInfo for Bits {
-	type Identity = Self;
+#[cfg(feature = "scale-info")]
+mod scale_info {
+	use scale_info::{build::Fields, Path, Type, TypeDefBitSequence, TypeInfo};
 
-	fn type_info() -> Type {
-		// Copied from `scale-info`'s bitvec impls; this avoids us needing
-		// to import bitvec but ensures we're compatible in terms of the type def.
-		enum Lsb0 {}
-		impl TypeInfo for Lsb0 {
-			type Identity = Self;
-			fn type_info() -> Type {
-				Type::builder().path(Path::new("Lsb0", "bitvec::order")).composite(Fields::unit())
+	impl TypeInfo for super::Bits {
+		type Identity = Self;
+
+		fn type_info() -> Type {
+			// Copied from `scale-info`'s bitvec impls; this avoids us needing
+			// to import bitvec but ensures we're compatible in terms of the type def.
+			enum Lsb0 {}
+			impl TypeInfo for Lsb0 {
+				type Identity = Self;
+				fn type_info() -> Type {
+					Type::builder()
+						.path(Path::new("Lsb0", "bitvec::order"))
+						.composite(Fields::unit())
+				}
 			}
-		}
 
-		TypeDefBitSequence::new::<Lsb0, u8>().into()
+			TypeDefBitSequence::new::<Lsb0, u8>().into()
+		}
 	}
 }
