@@ -110,17 +110,33 @@ pub fn decode_using_format_from(
 ) -> Result<Decoder<'_>, CodecError> {
 	use decode_iter::*;
 	use format::{OrderFormat, StoreFormat};
-	let iter = match (format.store, format.order) {
-		(StoreFormat::U8, OrderFormat::Lsb0) => Decoder::DecodeLsb0U8(DecodeLsb0U8::new(bytes)?),
-		(StoreFormat::U16, OrderFormat::Lsb0) => Decoder::DecodeLsb0U16(DecodeLsb0U16::new(bytes)?),
-		(StoreFormat::U32, OrderFormat::Lsb0) => Decoder::DecodeLsb0U32(DecodeLsb0U32::new(bytes)?),
-		(StoreFormat::U64, OrderFormat::Lsb0) => Decoder::DecodeLsb0U64(DecodeLsb0U64::new(bytes)?),
-		(StoreFormat::U8, OrderFormat::Msb0) => Decoder::DecodeMsb0U8(DecodeMsb0U8::new(bytes)?),
-		(StoreFormat::U16, OrderFormat::Msb0) => Decoder::DecodeMsb0U16(DecodeMsb0U16::new(bytes)?),
-		(StoreFormat::U32, OrderFormat::Msb0) => Decoder::DecodeMsb0U32(DecodeMsb0U32::new(bytes)?),
-		(StoreFormat::U64, OrderFormat::Msb0) => Decoder::DecodeMsb0U64(DecodeMsb0U64::new(bytes)?),
+	let inner = match (format.store, format.order) {
+		(StoreFormat::U8, OrderFormat::Lsb0) => {
+			DecodeInner::DecodeLsb0U8(DecodeLsb0U8::new(bytes)?)
+		}
+		(StoreFormat::U16, OrderFormat::Lsb0) => {
+			DecodeInner::DecodeLsb0U16(DecodeLsb0U16::new(bytes)?)
+		}
+		(StoreFormat::U32, OrderFormat::Lsb0) => {
+			DecodeInner::DecodeLsb0U32(DecodeLsb0U32::new(bytes)?)
+		}
+		(StoreFormat::U64, OrderFormat::Lsb0) => {
+			DecodeInner::DecodeLsb0U64(DecodeLsb0U64::new(bytes)?)
+		}
+		(StoreFormat::U8, OrderFormat::Msb0) => {
+			DecodeInner::DecodeMsb0U8(DecodeMsb0U8::new(bytes)?)
+		}
+		(StoreFormat::U16, OrderFormat::Msb0) => {
+			DecodeInner::DecodeMsb0U16(DecodeMsb0U16::new(bytes)?)
+		}
+		(StoreFormat::U32, OrderFormat::Msb0) => {
+			DecodeInner::DecodeMsb0U32(DecodeMsb0U32::new(bytes)?)
+		}
+		(StoreFormat::U64, OrderFormat::Msb0) => {
+			DecodeInner::DecodeMsb0U64(DecodeMsb0U64::new(bytes)?)
+		}
 	};
-	Ok(iter)
+	Ok(Decoder { inner })
 }
 
 /// This is handed back from [`decode_using_format_from`], and can be used to obtain some information about,
@@ -161,37 +177,38 @@ pub fn decode_using_format_from(
 /// assert_eq!(bits, new_bits.unwrap());
 /// ```
 #[derive(Clone, Debug)]
-#[non_exhaustive]
-pub enum Decoder<'a> {
-	/// Decode Lsb0 U8 bytes.
+pub struct Decoder<'a> {
+	inner: DecodeInner<'a>,
+}
+
+// [TODO] jsdw: Test performance. Can we scrap the macro stuff to
+// generate the various decode_iter types and just have a single type
+// to avoid needing to match on an enum arm each time we do something?
+// Avoid exposing this so we can do this as a non breaking patch change.
+#[derive(Clone, Debug)]
+enum DecodeInner<'a> {
 	DecodeLsb0U8(decode_iter::DecodeLsb0U8<'a>),
-	/// Decode Lsb0 U16 bytes.
 	DecodeLsb0U16(decode_iter::DecodeLsb0U16<'a>),
-	/// Decode Lsb0 U32 bytes.
 	DecodeLsb0U32(decode_iter::DecodeLsb0U32<'a>),
-	/// Decode Lsb0 U64 bytes.
 	DecodeLsb0U64(decode_iter::DecodeLsb0U64<'a>),
-	/// Decode Msb0 U8 bytes.
 	DecodeMsb0U8(decode_iter::DecodeMsb0U8<'a>),
-	/// Decode Msb0 U16 bytes.
 	DecodeMsb0U16(decode_iter::DecodeMsb0U16<'a>),
-	/// Decode Msb0 U32 bytes.
 	DecodeMsb0U32(decode_iter::DecodeMsb0U32<'a>),
-	/// Decode Msb0 U64 bytes.
 	DecodeMsb0U64(decode_iter::DecodeMsb0U64<'a>),
 }
 
 macro_rules! decode_iter_arms {
 	($self:ident, $i:ident => $expr:expr) => {{
-		match $self {
-			Decoder::DecodeLsb0U8($i) => $expr,
-			Decoder::DecodeLsb0U16($i) => $expr,
-			Decoder::DecodeLsb0U32($i) => $expr,
-			Decoder::DecodeLsb0U64($i) => $expr,
-			Decoder::DecodeMsb0U8($i) => $expr,
-			Decoder::DecodeMsb0U16($i) => $expr,
-			Decoder::DecodeMsb0U32($i) => $expr,
-			Decoder::DecodeMsb0U64($i) => $expr,
+		let Self { inner } = $self;
+		match inner {
+			DecodeInner::DecodeLsb0U8($i) => $expr,
+			DecodeInner::DecodeLsb0U16($i) => $expr,
+			DecodeInner::DecodeLsb0U32($i) => $expr,
+			DecodeInner::DecodeLsb0U64($i) => $expr,
+			DecodeInner::DecodeMsb0U8($i) => $expr,
+			DecodeInner::DecodeMsb0U16($i) => $expr,
+			DecodeInner::DecodeMsb0U32($i) => $expr,
+			DecodeInner::DecodeMsb0U64($i) => $expr,
 		}
 	}};
 }
