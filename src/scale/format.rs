@@ -72,7 +72,9 @@ impl Format {
 			TypeDef::Primitive(TypeDefPrimitive::U64) => Some(StoreFormat::U64),
 			_ => None,
 		}
-		.ok_or_else(|| FromMetadataError::StoreFormatNotSupported(format!("{bit_store_def:?}")))?;
+		.ok_or_else(|| {
+			FromMetadataError::StoreFormatNotSupported(alloc::format!("{bit_store_def:?}"))
+		})?;
 
 		let bit_order_out = match &*bit_order_def {
 			"Lsb0" => Some(OrderFormat::Lsb0),
