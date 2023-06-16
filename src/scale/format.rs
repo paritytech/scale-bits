@@ -46,20 +46,20 @@ impl Format {
 		ty: &scale_info::TypeDefBitSequence<scale_info::form::PortableForm>,
 		types: &scale_info::PortableRegistry,
 	) -> Result<Format, FromMetadataError> {
-		let bit_store_ty = ty.bit_store_type().id();
-		let bit_order_ty = ty.bit_order_type().id();
+		let bit_store_ty = ty.bit_store_type.id;
+		let bit_order_ty = ty.bit_order_type.id;
 
 		// What is the backing store type expected?
-		let bit_store_def = types
+		let bit_store_def = &types
 			.resolve(bit_store_ty)
 			.ok_or(FromMetadataError::StoreFormatNotFound(bit_store_ty))?
-			.type_def();
+			.type_def;
 
 		// What is the bit order type expected?
 		let bit_order_def = types
 			.resolve(bit_order_ty)
 			.ok_or(FromMetadataError::OrderFormatNotFound(bit_order_ty))?
-			.path()
+			.path
 			.ident()
 			.ok_or(FromMetadataError::NoBitOrderIdent)?;
 
@@ -164,7 +164,7 @@ mod test {
 		let id = types.register_type(&m);
 		let portable_registry: scale_info::PortableRegistry = types.into();
 
-		(id.id(), portable_registry)
+		(id.id, portable_registry)
 	}
 
 	fn assert_format<T: scale_info::TypeInfo + 'static>(store: StoreFormat, order: OrderFormat) {
@@ -172,7 +172,7 @@ mod test {
 		let (id, types) = make_type::<T>();
 
 		// Pull out said type info:
-		let ty = match types.resolve(id).unwrap().type_def() {
+		let ty = match types.resolve(id).unwrap().type_def {
 			scale_info::TypeDef::BitSequence(b) => b,
 			_ => panic!("expected type to look like a bit sequence"),
 		};
