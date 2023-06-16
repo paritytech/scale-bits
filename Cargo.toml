@@ -17,7 +17,7 @@ include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
 default = ["std", "serde", "scale-info"]
 std = [
     "scale-info/std",
-    "serde/std",
+    "serde?/std",
 ]
 
 # Allow Bits to be serialized and deserialized from boolean arrays.
