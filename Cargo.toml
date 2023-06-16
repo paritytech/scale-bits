@@ -14,7 +14,11 @@ keywords = ["parity", "scale", "encoding", "decoding", "bits"]
 include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
 
 [features]
-default = ["serde", "scale-info"]
+default = ["std", "serde", "scale-info"]
+std = [
+    "scale-info/std",
+    "serde/std",
+]
 
 # Allow Bits to be serialized and deserialized from boolean arrays.
 serde = ["dep:serde"]
@@ -24,9 +28,9 @@ serde = ["dep:serde"]
 scale-info = ["dep:scale-info"]
 
 [dependencies]
-scale-info = { version = "2.2.0", default-features = false, features = ["std"], optional = true }
-codec = { package = "parity-scale-codec", version = "3.2.0", default-features = false, features = [] }
-serde = { version = "1", optional = true }
+scale-info = { version = "2.2.0", default-features = false, optional = true }
+codec = { package = "parity-scale-codec", version = "3.2.0", default-features = false }
+serde = { version = "1", optional = true, default-features = false, features = ["alloc"] }
 
 [dev-dependencies]
 scale-info = { version = "2.2.0", default-features = false, features = ["std", "bit-vec"] }

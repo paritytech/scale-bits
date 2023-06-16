@@ -30,6 +30,7 @@
 //! sequences directly into the [`Bits`] type), but don't need to be used together.
 
 #![deny(missing_docs)]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 pub mod bits;
 pub mod scale;
