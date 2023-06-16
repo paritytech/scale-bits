@@ -16,6 +16,7 @@
 //! Ths module defines a [`Format`], which is basically a [`StoreFormat`] and an
 //! [`OrderFormat`] and describes the different possible wire formats of a bit sequence.
 
+use alloc::string::String;
 /// A description of the format used to SCALE encode some bits.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Format {
@@ -130,8 +131,8 @@ pub enum FromMetadataError {
 	OrderFormatNotSupported(String),
 }
 
-impl std::fmt::Display for FromMetadataError {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for FromMetadataError {
+	fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
 		match self {
 			FromMetadataError::OrderFormatNotFound(n) => {
 				write!(f, "Bit order type {n} not found in registry")
@@ -151,6 +152,8 @@ impl std::fmt::Display for FromMetadataError {
 		}
 	}
 }
+
+#[cfg(feature = "std")]
 impl std::error::Error for FromMetadataError {}
 
 #[cfg(feature = "scale-info")]

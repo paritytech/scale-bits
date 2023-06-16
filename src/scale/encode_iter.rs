@@ -16,10 +16,11 @@
 // This module contains functions which take an iterator of bools with known
 // sizes and encodes them to bitvecs of different shapes.
 
+use alloc::vec::Vec;
 use codec::{Compact, Encode};
 
 fn bits_in<T>() -> usize {
-	std::mem::size_of::<T>() * 8
+	core::mem::size_of::<T>() * 8
 }
 
 macro_rules! encode_iter_lsb {

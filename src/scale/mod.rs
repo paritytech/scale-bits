@@ -9,6 +9,7 @@
 
 mod decode_iter;
 mod encode_iter;
+use alloc::vec::Vec;
 use codec::Error as CodecError;
 
 pub mod format;

@@ -15,6 +15,7 @@
 
 #![allow(clippy::module_inception)]
 
+use alloc::vec::Vec;
 use codec::{Compact, Decode, Encode};
 
 /// This macro makes it trivial to construct [`Bits`] from either 0 and 1 bit
@@ -353,7 +354,7 @@ impl Bits {
 	}
 }
 
-impl std::iter::IntoIterator for Bits {
+impl core::iter::IntoIterator for Bits {
 	type Item = bool;
 	type IntoIter = BitsIntoIter;
 
@@ -407,7 +408,7 @@ impl<'a> Iterator for BitsIter<'a> {
 }
 impl<'a> ExactSizeIterator for BitsIter<'a> {}
 
-impl std::iter::FromIterator<bool> for Bits {
+impl core::iter::FromIterator<bool> for Bits {
 	fn from_iter<T: IntoIterator<Item = bool>>(iter: T) -> Self {
 		let iter = iter.into_iter();
 
