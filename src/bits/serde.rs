@@ -43,7 +43,7 @@ impl<'de> Deserialize<'de> for Bits {
 		impl<'de> Visitor<'de> for BitsVisitor {
 			type Value = Bits;
 
-			fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+			fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
 				formatter.write_str("a sequence of booleans")
 			}
 
