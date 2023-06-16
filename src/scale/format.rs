@@ -172,7 +172,7 @@ mod test {
 		let (id, types) = make_type::<T>();
 
 		// Pull out said type info:
-		let ty = match types.resolve(id).unwrap().type_def {
+		let ty = match &types.resolve(id).unwrap().type_def {
 			scale_info::TypeDef::BitSequence(b) => b,
 			_ => panic!("expected type to look like a bit sequence"),
 		};
