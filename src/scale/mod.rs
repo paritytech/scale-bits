@@ -242,6 +242,7 @@ impl<'a> Decoder<'a> {
 mod test {
 	use super::format::{Format, OrderFormat, StoreFormat};
 	use super::*;
+	use alloc::vec;
 	use bitvec::{
 		order::{BitOrder, Lsb0, Msb0},
 		store::BitStore,

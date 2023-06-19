@@ -96,6 +96,7 @@ encode_iter_msb!(encode_iter_msb0_u64, u64);
 #[cfg(test)]
 mod test {
 	use super::*;
+	use alloc::vec;
 	use bitvec::{
 		order::{Lsb0, Msb0},
 		vec::BitVec,

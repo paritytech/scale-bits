@@ -166,6 +166,8 @@ decode_iter!(msb, DecodeMsb0U64, u64);
 #[cfg(test)]
 mod test {
 	use super::*;
+	use alloc::vec;
+	use alloc::vec::Vec;
 	use bitvec::{
 		order::{Lsb0, Msb0},
 		vec::BitVec,
