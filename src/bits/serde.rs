@@ -67,6 +67,7 @@ impl<'de> Deserialize<'de> for Bits {
 #[cfg(test)]
 mod test {
 	use crate::bits::Bits;
+	use alloc::vec;
 
 	#[test]
 	fn ser_deser_bits() {
