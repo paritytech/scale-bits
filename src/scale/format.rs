@@ -17,6 +17,8 @@
 //! [`OrderFormat`] and describes the different possible wire formats of a bit sequence.
 
 use alloc::string::String;
+#[cfg(feature = "scale-info")]
+use alloc::string::ToString;
 
 /// A description of the format used to SCALE encode some bits.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -82,7 +84,7 @@ impl Format {
 			"Msb0" => Some(OrderFormat::Msb0),
 			_ => None,
 		}
-		.ok_or(FromMetadataError::OrderFormatNotSupported(bit_order_def))?;
+		.ok_or(FromMetadataError::OrderFormatNotSupported(bit_order_def.to_string()))?;
 
 		Ok(Format { store: bit_store_out, order: bit_order_out })
 	}
