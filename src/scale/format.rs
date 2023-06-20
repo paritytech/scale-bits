@@ -17,6 +17,7 @@
 //! [`OrderFormat`] and describes the different possible wire formats of a bit sequence.
 
 use alloc::string::String;
+
 /// A description of the format used to SCALE encode some bits.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Format {
