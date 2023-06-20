@@ -19,7 +19,7 @@
 use codec::{Compact, Decode, Encode, Error as CodecError};
 
 fn bits_in<T>() -> u8 {
-	(std::mem::size_of::<T>() * 8) as u8
+	(core::mem::size_of::<T>() * 8) as u8
 }
 
 macro_rules! starting_bit {
@@ -82,7 +82,7 @@ macro_rules! decode_iter {
 			pub fn encoded_size(&self) -> usize {
 				let num_bits = self.len as usize;
 
-				let bytes_per_store = std::mem::size_of::<$ty>();
+				let bytes_per_store = core::mem::size_of::<$ty>();
 				let bits_per_store = bytes_per_store * 8;
 
 				// Dividing rounds down, and then multiply by number of bytes.
@@ -166,6 +166,8 @@ decode_iter!(msb, DecodeMsb0U64, u64);
 #[cfg(test)]
 mod test {
 	use super::*;
+	use alloc::vec;
+	use alloc::vec::Vec;
 	use bitvec::{
 		order::{Lsb0, Msb0},
 		vec::BitVec,

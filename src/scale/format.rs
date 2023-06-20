@@ -16,6 +16,10 @@
 //! Ths module defines a [`Format`], which is basically a [`StoreFormat`] and an
 //! [`OrderFormat`] and describes the different possible wire formats of a bit sequence.
 
+use alloc::string::String;
+#[cfg(feature = "scale-info")]
+use alloc::string::ToString;
+
 /// A description of the format used to SCALE encode some bits.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Format {
@@ -46,20 +50,20 @@ impl Format {
 		ty: &scale_info::TypeDefBitSequence<scale_info::form::PortableForm>,
 		types: &scale_info::PortableRegistry,
 	) -> Result<Format, FromMetadataError> {
-		let bit_store_ty = ty.bit_store_type().id();
-		let bit_order_ty = ty.bit_order_type().id();
+		let bit_store_ty = ty.bit_store_type.id;
+		let bit_order_ty = ty.bit_order_type.id;
 
 		// What is the backing store type expected?
-		let bit_store_def = types
+		let bit_store_def = &types
 			.resolve(bit_store_ty)
 			.ok_or(FromMetadataError::StoreFormatNotFound(bit_store_ty))?
-			.type_def();
+			.type_def;
 
 		// What is the bit order type expected?
 		let bit_order_def = types
 			.resolve(bit_order_ty)
 			.ok_or(FromMetadataError::OrderFormatNotFound(bit_order_ty))?
-			.path()
+			.path
 			.ident()
 			.ok_or(FromMetadataError::NoBitOrderIdent)?;
 
@@ -71,14 +75,16 @@ impl Format {
 			TypeDef::Primitive(TypeDefPrimitive::U64) => Some(StoreFormat::U64),
 			_ => None,
 		}
-		.ok_or_else(|| FromMetadataError::StoreFormatNotSupported(format!("{bit_store_def:?}")))?;
+		.ok_or_else(|| {
+			FromMetadataError::StoreFormatNotSupported(alloc::format!("{bit_store_def:?}"))
+		})?;
 
 		let bit_order_out = match &*bit_order_def {
 			"Lsb0" => Some(OrderFormat::Lsb0),
 			"Msb0" => Some(OrderFormat::Msb0),
 			_ => None,
 		}
-		.ok_or(FromMetadataError::OrderFormatNotSupported(bit_order_def))?;
+		.ok_or(FromMetadataError::OrderFormatNotSupported(bit_order_def.to_string()))?;
 
 		Ok(Format { store: bit_store_out, order: bit_order_out })
 	}
@@ -130,8 +136,8 @@ pub enum FromMetadataError {
 	OrderFormatNotSupported(String),
 }
 
-impl std::fmt::Display for FromMetadataError {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for FromMetadataError {
+	fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
 		match self {
 			FromMetadataError::OrderFormatNotFound(n) => {
 				write!(f, "Bit order type {n} not found in registry")
@@ -151,6 +157,8 @@ impl std::fmt::Display for FromMetadataError {
 		}
 	}
 }
+
+#[cfg(feature = "std")]
 impl std::error::Error for FromMetadataError {}
 
 #[cfg(feature = "scale-info")]
@@ -164,7 +172,7 @@ mod test {
 		let id = types.register_type(&m);
 		let portable_registry: scale_info::PortableRegistry = types.into();
 
-		(id.id(), portable_registry)
+		(id.id, portable_registry)
 	}
 
 	fn assert_format<T: scale_info::TypeInfo + 'static>(store: StoreFormat, order: OrderFormat) {
@@ -172,7 +180,7 @@ mod test {
 		let (id, types) = make_type::<T>();
 
 		// Pull out said type info:
-		let ty = match types.resolve(id).unwrap().type_def() {
+		let ty = match &types.resolve(id).unwrap().type_def {
 			scale_info::TypeDef::BitSequence(b) => b,
 			_ => panic!("expected type to look like a bit sequence"),
 		};

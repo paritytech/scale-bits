@@ -9,6 +9,7 @@
 
 mod decode_iter;
 mod encode_iter;
+use alloc::vec::Vec;
 use codec::Error as CodecError;
 
 pub mod format;
@@ -241,6 +242,7 @@ impl<'a> Decoder<'a> {
 mod test {
 	use super::format::{Format, OrderFormat, StoreFormat};
 	use super::*;
+	use alloc::vec;
 	use bitvec::{
 		order::{BitOrder, Lsb0, Msb0},
 		store::BitStore,
