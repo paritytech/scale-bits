@@ -4,9 +4,17 @@ The format is based on [Keep a Changelog].
 
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 
+## 0.4.0
+
+`no_std` is now supported; use `--no-default-features` to disable "std" (`serde` and `scale-info` features both support this too).
+
+### Changes
+
+- Add no_std compatibility ([#2](https://github.com/paritytech/scale-bits/pull/2)). Thankyou @haerdib!
+
 ## 0.3.0
 
-## Changes
+### Changes
 
 - Hide the inner `Decoder` enum variants so that we have the opportunity to improve performance on them in the future with a non breaking change.
 
