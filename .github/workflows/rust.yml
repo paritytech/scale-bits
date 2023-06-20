@@ -105,9 +105,9 @@ jobs:
         uses: actions-rs/cargo@v1.0.3
         with:
           command: check
-          # The thumbv6m-none-eabi doesn't support `std`, so this
+          # The aarch64-unknown-none doesn't support `std`, so this
           # will fail if the crate is not no_std compatible.
-          args: --no-default-features --target thumbv6m-none-eabi --features scale-info,serde
+          args: --no-default-features --target aarch64-unknown-none --features scale-info,serde
 
 
   fmt:
