@@ -14,10 +14,7 @@ use codec::Error as CodecError;
 
 /// Types to describe the format of some SCALE encoded bits.
 pub mod format {
-	pub use scale_type_resolver::{
-		BitsOrderFormat as OrderFormat,
-		BitsStoreFormat as StoreFormat
-	};
+	pub use scale_type_resolver::{BitsOrderFormat as OrderFormat, BitsStoreFormat as StoreFormat};
 
 	/// A description of the format used to SCALE encode some bits.
 	#[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -96,7 +93,7 @@ pub fn encode_using_format_to<I: ExactSizeIterator<Item = bool>>(
 	out: &mut Vec<u8>,
 ) {
 	use encode_iter::*;
-	use format::{ OrderFormat, StoreFormat };
+	use format::{OrderFormat, StoreFormat};
 	match (format.store, format.order) {
 		(StoreFormat::U8, OrderFormat::Lsb0) => encode_iter_lsb0_u8(it, out),
 		(StoreFormat::U8, OrderFormat::Msb0) => encode_iter_msb0_u8(it, out),
