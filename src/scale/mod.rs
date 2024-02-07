@@ -12,8 +12,37 @@ mod encode_iter;
 use alloc::vec::Vec;
 use codec::Error as CodecError;
 
-pub mod format;
-// expose the "common" type; rest in `format` module.
+/// Types to describe the format of some SCALE encoded bits.
+pub mod format {
+	pub use scale_type_resolver::{BitsOrderFormat as OrderFormat, BitsStoreFormat as StoreFormat};
+
+	/// A description of the format used to SCALE encode some bits.
+	#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+	pub struct Format {
+		/// The [`StoreFormat`] defines the size of each chunk that's written (eg u8, u16 etc).
+		pub store: StoreFormat,
+		/// The [`OrderFormat`] determines the order in which we write bits to the store type;
+		/// do we write to the least significant bit first and work up, or write to the most
+		/// significant byte first and work down.
+		pub order: OrderFormat,
+	}
+
+	impl Format {
+		/// Define a new format by providing a store and order.
+		///
+		/// # Example
+		///
+		/// ```rust
+		/// use scale_bits::scale::format::{ Format, StoreFormat, OrderFormat };
+		///
+		/// let format = Format::new(StoreFormat::U8, OrderFormat::Lsb0);
+		/// ```
+		pub fn new(store: StoreFormat, order: OrderFormat) -> Self {
+			Format { store, order }
+		}
+	}
+}
+
 pub use format::Format;
 
 /// This is a convenience wrapper around [`encode_using_format_to`].
