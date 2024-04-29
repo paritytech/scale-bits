@@ -1,6 +1,6 @@
 [package]
 name = "scale-bits"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2021"
 
@@ -30,7 +30,7 @@ scale-info = ["dep:scale-info"]
 scale-info = { version = "2.7.0", default-features = false, optional = true }
 codec = { package = "parity-scale-codec", version = "3.2.0", default-features = false }
 serde = { version = "1", optional = true, default-features = false, features = ["alloc"] }
-scale-type-resolver = { version = "0.1", default-features = false }
+scale-type-resolver = { version = "0.2", default-features = false }
 
 [dev-dependencies]
 scale-info = { version = "2.7.0", default-features = false, features = ["std", "bit-vec"] }
