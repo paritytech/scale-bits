@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog].
 
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 
+## 0.6.0
+
+Update `scale-type-resolver` dependency to 0.2.0.
+
 ## 0.5.0
 
 Depend on `scale-type-resolver` for a order and store enums, and remove `Format::from_metadata` (this is now available as `scale_type_resolver::portable_registry::bits_from_metadata()`).
