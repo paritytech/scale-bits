@@ -14,11 +14,7 @@ keywords = ["parity", "scale", "encoding", "decoding", "bits"]
 include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
 
 [features]
-default = ["std", "serde", "scale-info"]
-std = [
-    "scale-info?/std",
-    "serde?/std",
-]
+default = ["serde", "scale-info"]
 
 # Allow Bits to be serialized and deserialized from boolean arrays.
 serde = ["dep:serde"]

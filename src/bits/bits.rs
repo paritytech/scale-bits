@@ -364,7 +364,7 @@ impl core::iter::IntoIterator for Bits {
 }
 
 /// Returned from calling `into_iter` on [`Bits`] via the
-/// [`std::iter::IntoIterator`] trait. Allows iteration over
+/// [`core::iter::IntoIterator`] trait. Allows iteration over
 /// each stored bit.
 #[derive(Clone, Debug)]
 pub struct BitsIntoIter {
