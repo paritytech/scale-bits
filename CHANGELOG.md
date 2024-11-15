@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog].
 This release removes the `std feature` from the this crate which means that the crate is now `no_std` compatible by default.
 
 ### Changes
-- Remove std feature and make fully no_std 
+- Remove std feature and make the crate fully no_std 
 - Update to `scale-info` to 2.11.5
 
 ## 0.6.0
